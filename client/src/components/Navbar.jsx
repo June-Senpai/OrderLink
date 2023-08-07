@@ -41,9 +41,11 @@ export const Navbar = ({ setTheme, theme }) => {
             <div>
               <NavLink
                 data-text="Home"
-                className={getActiveClass("/", location)}
+                className={`${getActiveClass(
+                  "/",
+                  location
+                )} flex items-center py-4 px-2`}
                 to="/"
-                className="flex items-center py-4 px-2"
               >
                 <span className="font-semibold text-gray-500 text-lg">
                   ThreeWay
