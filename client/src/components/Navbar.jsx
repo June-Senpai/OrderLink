@@ -5,19 +5,7 @@ import "../App.css"
 import { useGetUserID } from "../hooks/useGetUserID"
 import { HamburgerMenu } from "./HamburgerMenu"
 
-function getActiveClass(route, location) {
-  switch (location.pathname) {
-    case route:
-      return "activeTab"
-      break
-
-    default:
-      return "tab"
-      break
-  }
-}
-
-export const Navbar = ({ setTheme, theme }) => {
+export const Navbar = ({ setTheme, theme, username }) => {
   const [cookies, setCookies] = useCookies(["access_token"])
   const navigate = useNavigate()
   const location = useLocation()
@@ -34,47 +22,46 @@ export const Navbar = ({ setTheme, theme }) => {
     })
   }
   return (
-    <nav className="bg-white shadow-lg">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between">
+    <nav className="bg-white shadow-lg mb-8">
+      <div className="max-w-6xl mx-auto px-4 p-2">
+        <div className="flex justify-between ">
           <div className="flex space-x-7">
             <div>
-              <NavLink
-                data-text="Home"
-                className={`${getActiveClass(
-                  "/",
-                  location
-                )} flex items-center py-4 px-2`}
-                to="/"
-              >
-                <span className="font-semibold text-gray-500 text-lg">
-                  ThreeWay
-                </span>
-              </NavLink>
+              {cookies.access_token && (
+                <NavLink
+                  data-text="Home"
+                  className={` flex items-center`}
+                  to="/"
+                >
+                  <span className="font-semibold text-gray-500 text-2xl">
+                    ThreeWay
+                  </span>
+                </NavLink>
+              )}
             </div>
             <div className="hidden md:flex items-center space-x-1">
-              <NavLink
+              {/* <NavLink
                 data-text="Home"
                 className={getActiveClass("/", location)}
                 to="/"
               >
                 Home
-              </NavLink>
+              </NavLink> */}
             </div>
           </div>
-          <div className="hidden md:flex items-center space-x-3 ">
+          <div className="hidden md:flex items-center space-x-3 text-2xl ">
             {!cookies.access_token ? (
-              <NavLink className={getActiveClass("/auth", location)} to="/auth">
+              <NavLink className={("/auth", location)} to="/auth">
                 Login/register
               </NavLink>
             ) : (
-              <button className="logout" onClick={logout}>
-                Logout
-              </button>
+              <>
+                <span>{username}</span>
+                <button className="logout text-red-400" onClick={logout}>
+                  Logout
+                </button>
+              </>
             )}
-            <button onClick={handleTheme} className="themeBtn">
-              {theme === "dark" ? "🌞" : "🌛"}
-            </button>
           </div>
           <div className="md:hidden flex items-center">
             <HamburgerMenu onClick={() => setShowLinks(!showLinks)} />
@@ -85,21 +72,34 @@ export const Navbar = ({ setTheme, theme }) => {
         className={`mobile-menu ${
           showLinks ? "" : "hidden"
         } md:hidden bg-white shadow-lg`}
+        style={{ zIndex: 10 }}
       >
-        <NavLink data-text="Home" to="/">
+        <NavLink
+          data-text="Home"
+          to="/"
+          className="text-gray-700 font-semibold py-2 px-4 transition duration-300 ease-in-out hover:text-blue-00 flex flex-col items-center justify-center"
+        >
           Home
         </NavLink>
-
-        {!cookies.access_token ? (
-          <NavLink to="/auth">Login/register</NavLink>
-        ) : (
-          <>
-            <button onClick={logout}>Logout</button>
-            <button onClick={handleTheme} className="themeBtn">
-              {theme === "dark" ? "🌞" : "🌛"}
-            </button>
-          </>
-        )}
+        <div className="flex flex-col">
+          {!cookies.access_token ? (
+            <NavLink
+              to="/auth"
+              className="text-gray-700 font-semibold py-2 px-4 transition duration-300 ease-in-out hover:text-blue-900 flex flex-col items-center justify-center "
+            >
+              Login/register
+            </NavLink>
+          ) : (
+            <>
+              <button
+                onClick={logout}
+                className="text-red-400 font-semibold py-2 px-4 transition duration-300 ease-in-out hover:text-blue-900 "
+              >
+                Logout
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </nav>
   )

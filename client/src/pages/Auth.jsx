@@ -3,16 +3,16 @@ import axios from "axios"
 import { useCookies } from "react-cookie"
 import { useNavigate } from "react-router-dom"
 
-export const Auth = () => {
+export const Auth = ({ setUsername, setUserType }) => {
   return (
     <div className="auth flex flex-col items-center justify-center">
-      <Login />
-      <Register />
+      <Login setUsername={setUsername} />
+      <Register setUserType={setUserType} />
     </div>
   )
 }
 
-const Login = () => {
+const Login = ({ setUsername: setUsernameProp }) => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
@@ -33,6 +33,8 @@ const Login = () => {
 
       setCookies("access_token", response.data.token)
       window.localStorage.setItem("userID", response.data.userID)
+      window.localStorage.setItem("username", username)
+      setUsernameProp(username)
       navigate("/")
     } catch (err) {
       console.error(err)
@@ -52,7 +54,6 @@ const Login = () => {
     </div>
   )
 }
-
 const Register = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -72,6 +73,7 @@ const Register = () => {
         }
       )
       alert("Registration successful. Please login.")
+      setUserType(userType)
     } catch (err) {
       console.error(err)
     }

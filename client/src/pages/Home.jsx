@@ -1,8 +1,8 @@
-import React from "react"
-import { useState } from "react"
+import React, { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { useCookies } from "react-cookie"
 import OrderItem from "../components/OrderItem"
 import Search from "../components/Search"
-
 const order = [
   {
     id: 1,
@@ -48,6 +48,14 @@ const order = [
 
 const Home = () => {
   const [orderList, setOrderList] = useState(order)
+  const [cookies] = useCookies(["access_token"])
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!cookies.access_token) {
+      navigate("/auth")
+    }
+  }, [cookies, navigate])
 
   return (
     <div className="flex flex-col items-center justify-center">
