@@ -6,7 +6,7 @@ const { orderRouter } = require("./orderRoutes")
 const { messageRouter } = require("./messageRoutes")
 
 router.use("/users", userRouter)
-router.use("/orders", orderRouter)
+router.use("/", orderRouter)
 router.use("/messages", messageRouter)
 
 module.exports = router

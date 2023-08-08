@@ -1,37 +1,24 @@
-import React, { useState } from "react"
+import React from "react"
 
-const Search = ({ order, setOrderList }) => {
-  const [searchTerm, setSearchTerm] = useState("")
-
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value)
+const Search = ({ searchTerm, setSearchTerm }) => {
+  const handleSearch = (event, field) => {
+    setSearchTerm((prevState) => ({
+      ...prevState,
+      [field]: event.target.value,
+    }))
   }
-
-  const filteredData = order.filter(
-    (item) => item.transporter.toLowerCase().includes(searchTerm.toLowerCase())
-    // item.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    // item.to.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const handleSearchSubmit = () => {
-    setOrderList(filteredData)
-  }
-
   return (
-    <div className="flex items-center justify-center mt-2 mb-2">
-      <input
-        type="text"
-        placeholder="Search..."
-        onChange={handleSearch}
-        value={searchTerm}
-        className="border border-gray-300 rounded-md px-4 py-2 "
-      />
-      <button
-        onClick={handleSearchSubmit}
-        className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md"
-      >
-        Search
-      </button>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 items-center justify-center mt-2 mb-2">
+      {Object.keys(searchTerm).map((field) => (
+        <input
+          key={field}
+          type="text"
+          placeholder={`Search by ${field}...`}
+          onChange={(event) => handleSearch(event, field)}
+          value={searchTerm[field]}
+          className="border border-gray-300 rounded-md px-4 py-2 mb-2"
+        />
+      ))}
     </div>
   )
 }

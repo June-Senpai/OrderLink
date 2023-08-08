@@ -1,10 +1,11 @@
 import React from "react"
 
 const OrderItem = ({ order }) => {
-  const { id, from, to, quantity, pickup, transporter } = order
+  const { orderID, from, to, quantity, pickupAddress, transporter } = order
   return (
     <div className="border border-gray-300 rounded-md p-4 mb-4">
-      <h2 className="text-lg font-semibold mb-2">Order ID: {id}</h2>
+      <span className="text-lg font-semibold ">Order ID:</span>
+      {orderID}
       <p className="mb-1">
         <span className="font-semibold">From:</span> {from}
       </p>
@@ -12,10 +13,10 @@ const OrderItem = ({ order }) => {
         <span className="font-semibold">To:</span> {to}
       </p>
       <p className="mb-1">
-        <span className="font-semibold">Quantity:</span> {quantity}
+        <span className="font-semibold">Quantity:</span> {quantity} ton
       </p>
       <p className="mb-1">
-        <span className="font-semibold">Pickup:</span> {pickup}
+        <span className="font-semibold">Pickup:</span> {pickupAddress}
       </p>
       <p className="mb-1">
         <span className="font-semibold">Transporter:</span> {transporter}

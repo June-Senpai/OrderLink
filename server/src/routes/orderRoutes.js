@@ -28,4 +28,11 @@ router.get("/orders/:orderID", async (req, res) => {
   res.json(order)
 })
 
+router.patch("/orders/:orderID", async (req, res) => {
+  const { orderID } = req.params
+  const { price } = req.body
+  await Order.updateOne({ orderID }, { price })
+  res.json({ message: "Price updated successfully" })
+})
+
 module.exports.orderRouter = router

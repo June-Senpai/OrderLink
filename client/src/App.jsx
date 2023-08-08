@@ -4,13 +4,16 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import { Navbar } from "./components/Navbar"
 import Home from "./pages/Home"
 import { Auth } from "./pages/Auth"
+import ManufacturerForm from "./components/ManufacturerForm"
+import { TransporterForm } from "./components/TransporterForm"
 
 function App() {
   const [username, setUsername] = useState(
     window.localStorage.getItem("username") || ""
   )
-
-  const [userType, setUserType] = useState(null)
+  const [userType, setUserType] = useState(
+    window.localStorage.getItem("userType") || ""
+  )
 
   return (
     <div className="app">
@@ -18,7 +21,18 @@ function App() {
         <Navbar username={username} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/auth" element={<Auth setUsername={setUsername} />} />
+          {userType === "TRANSPORTER" ? (
+            <Route path="/form" element={<TransporterForm />} />
+          ) : (
+            <Route path="/form" element={<ManufacturerForm />} />
+          )}
+          <Route path="/formT" element={<TransporterForm />} />
+          <Route
+            path="/auth"
+            element={
+              <Auth setUsername={setUsername} setUserType={setUserType} />
+            }
+          />
         </Routes>
       </Router>
     </div>

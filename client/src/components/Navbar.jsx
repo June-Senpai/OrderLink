@@ -40,13 +40,13 @@ export const Navbar = ({ setTheme, theme, username }) => {
               )}
             </div>
             <div className="hidden md:flex items-center space-x-1">
-              {/* <NavLink
-                data-text="Home"
-                className={getActiveClass("/", location)}
-                to="/"
+              <NavLink
+                data-text="Form"
+                className="hidden md:flex items-center space-x-3 text-2xl"
+                to="/form"
               >
-                Home
-              </NavLink> */}
+                Form
+              </NavLink>
             </div>
           </div>
           <div className="hidden md:flex items-center space-x-3 text-2xl ">
@@ -80,6 +80,13 @@ export const Navbar = ({ setTheme, theme, username }) => {
           className="text-gray-700 font-semibold py-2 px-4 transition duration-300 ease-in-out hover:text-blue-00 flex flex-col items-center justify-center"
         >
           Home
+        </NavLink>
+        <NavLink
+          data-text="Form"
+          className="text-gray-700 font-semibold py-2 px-4 transition duration-300 ease-in-out hover:text-blue-00 flex flex-col items-center justify-center"
+          to="/form"
+        >
+          Form
         </NavLink>
         <div className="flex flex-col">
           {!cookies.access_token ? (

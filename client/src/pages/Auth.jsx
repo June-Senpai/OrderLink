@@ -7,7 +7,7 @@ export const Auth = ({ setUsername, setUserType }) => {
   return (
     <div className="auth flex flex-col items-center justify-center">
       <Login setUsername={setUsername} />
-      <Register setUserType={setUserType} />
+      <Register />
     </div>
   )
 }
@@ -54,6 +54,7 @@ const Login = ({ setUsername: setUsernameProp }) => {
     </div>
   )
 }
+
 const Register = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")

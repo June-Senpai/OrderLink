@@ -22,6 +22,13 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  transporter: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
