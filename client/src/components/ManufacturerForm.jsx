@@ -70,6 +70,7 @@ const ManufacturerForm = ({ orderID, setOrderID }) => {
               id="from"
               value={from}
               onChange={(event) => setFrom(event.target.value)}
+              placeholder="Source of the pickup"
               className="border border-gray-300 p-2 rounded-lg w-full"
             />
           </div>
@@ -85,6 +86,7 @@ const ManufacturerForm = ({ orderID, setOrderID }) => {
               id="to"
               value={to}
               onChange={(event) => setTo(event.target.value)}
+              placeholder="Destination of where the goods are meant to be delivered"
               className="border border-gray-300 p-2 rounded-lg w-full"
             />
           </div>
@@ -118,6 +120,7 @@ const ManufacturerForm = ({ orderID, setOrderID }) => {
               id="pickupAddress"
               value={pickupAddress}
               onChange={(event) => setPickupAddress(event.target.value)}
+              placeholder="Address"
               className="border border-gray-300 p-2 rounded-lg w-full"
             />
           </div>
