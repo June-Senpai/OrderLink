@@ -11,9 +11,9 @@ const Home = () => {
     orderID: "",
     from: "",
     to: "",
-    quantity: "",
-    pickupAddress: "",
-    transporter: "",
+    // quantity: "",
+    // pickupAddress: "",
+    // transporter: "",
   })
   const [cookies] = useCookies(["access_token"])
   const navigate = useNavigate()

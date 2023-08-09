@@ -28,11 +28,17 @@ router.get("/orders/:orderID", async (req, res) => {
   res.json(order)
 })
 
-router.patch("/orders/:orderID", async (req, res) => {
-  const { orderID } = req.params
-  const { price } = req.body
-  await Order.updateOne({ orderID }, { price })
-  res.json({ message: "Price updated successfully" })
-})
+// router.patch("/orders/:orderID", async (req, res) => {
+//   const { orderID } = req.params
+//   const { price } = req.body
+//   await Order.updateOne({ orderID }, { price })
+//   res.json({ message: "Price updated successfully" })
+// })
+
+// router.get("/manufacturer/:id/address", async (req, res) => {
+//   const { id } = req.params
+//   const manufacturer = await Manufacturer.findOne({ _id: id })
+//   res.json(manufacturer.address)
+// })
 
 module.exports.orderRouter = router

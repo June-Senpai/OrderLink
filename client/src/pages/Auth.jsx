@@ -6,13 +6,16 @@ import { useNavigate } from "react-router-dom"
 export const Auth = ({ setUsername, setUserType }) => {
   return (
     <div className="auth flex flex-col items-center justify-center">
-      <Login setUsername={setUsername} />
+      <Login setUsername={setUsername} setUserType={setUserType} />
       <Register />
     </div>
   )
 }
 
-const Login = ({ setUsername: setUsernameProp }) => {
+const Login = ({
+  setUsername: setUsernameProp,
+  setUserType: setUserTypeProp,
+}) => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
@@ -34,7 +37,9 @@ const Login = ({ setUsername: setUsernameProp }) => {
       setCookies("access_token", response.data.token)
       window.localStorage.setItem("userID", response.data.userID)
       window.localStorage.setItem("username", username)
+      window.localStorage.setItem("userType", response.data.userType)
       setUsernameProp(username)
+      setUserTypeProp(response.data.userType)
       navigate("/")
     } catch (err) {
       console.error(err)

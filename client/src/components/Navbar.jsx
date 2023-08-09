@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import { NavLink, useNavigate, useLocation } from "react-router-dom"
 import { useCookies } from "react-cookie"
-import "../App.css"
 import { useGetUserID } from "../hooks/useGetUserID"
 import { HamburgerMenu } from "./HamburgerMenu"
 

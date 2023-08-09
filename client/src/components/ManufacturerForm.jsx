@@ -4,8 +4,7 @@ import { motion } from "framer-motion"
 import { v4 as uuidv4 } from "uuid"
 import { useNavigate } from "react-router-dom"
 
-const ManufacturerForm = () => {
-  const [orderID, setOrderID] = useState(uuidv4())
+const ManufacturerForm = ({ orderID, setOrderID }) => {
   const [from, setFrom] = useState("")
   const [to, setTo] = useState("")
   const [quantity, setQuantity] = useState(1)
