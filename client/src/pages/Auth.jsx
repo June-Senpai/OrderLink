@@ -38,6 +38,7 @@ const Login = ({
       window.localStorage.setItem("userID", response.data.userID)
       window.localStorage.setItem("username", username)
       window.localStorage.setItem("userType", response.data.userType)
+      window.localStorage.setItem("address", response.data.address)
       setUsernameProp(username)
       setUserTypeProp(response.data.userType)
       navigate("/")
@@ -60,16 +61,45 @@ const Login = ({
   )
 }
 
+const Modal = ({ isOpen, onClose, children, error }) => {
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed z-10 inset-0 overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
+          <div className="p-4">
+            {error ? <p className="text-red-500">{error}</p> : children}
+          </div>
+          <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const Register = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [userType, setUserType] = useState("TRANSPORTER")
   const [address, setAddress] = useState("")
 
+  const [registrationStatus, setRegistrationStatus] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
+
   const onSubmit = async (event) => {
     event.preventDefault()
     try {
-      await axios.post(
+      const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}users/register/user`,
         {
           username,
@@ -78,10 +108,14 @@ const Register = () => {
           address,
         }
       )
-      alert("Registration successful. Please login.")
-      setUserType(userType)
+      if (response.data.message === "user already exists") {
+        setErrorMessage("A user with that username already exists.")
+      } else {
+        setRegistrationStatus("success")
+      }
     } catch (err) {
       console.error(err)
+      setRegistrationStatus("error")
     }
   }
 
@@ -95,6 +129,12 @@ const Register = () => {
         label="Register"
         onSubmit={onSubmit}
       >
+        <Modal
+          isOpen={registrationStatus === "success"}
+          onClose={() => setRegistrationStatus("")}
+        >
+          <p>Registration successful. Please login.</p>
+        </Modal>
         <div className="form-group mb-4">
           <label htmlFor="userType" className="block mb-1 font-semibold">
             User Type:
@@ -121,6 +161,11 @@ const Register = () => {
             className="border border-gray-300 rounded-md px-4 py-2 w-full"
           />
         </div>
+        <Modal
+          isOpen={!!errorMessage}
+          onClose={() => setErrorMessage("")}
+          error={errorMessage}
+        />
       </Form>
     </div>
   )

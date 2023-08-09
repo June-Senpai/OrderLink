@@ -1,36 +1,45 @@
-import { useState } from "react"
+import { useState, useEffect, useMemo } from "react"
 import axios from "axios"
 import { motion } from "framer-motion"
 import { v4 as uuidv4 } from "uuid"
 import { useNavigate } from "react-router-dom"
 
-const ManufacturerForm = ({ orderID, setOrderID }) => {
-  const [from, setFrom] = useState("")
-  const [to, setTo] = useState("")
-  const [quantity, setQuantity] = useState(1)
-  const [pickupAddress, setPickupAddress] = useState("")
-  const [transporter, setTransporter] = useState("")
+const ManufacturerForm = () => {
+  const orderID = useMemo(() => Date.now().toString(36).toUpperCase(), [])
 
+  const pickupAddress = localStorage.getItem("address")
   const navigate = useNavigate()
 
   const onSubmit = async (event) => {
     event.preventDefault()
+    const data = new FormData(event.target)
+    const formData = Object.fromEntries(data.entries())
+    formData.user = localStorage.getItem("userID")
     try {
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}orders`, {
-        orderID,
-        from,
-        to,
-        quantity,
-        pickupAddress,
-        transporter,
-      })
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}orders`, formData)
       // alert("Order created successfully")
-      setOrderID(uuidv4())
       navigate("/")
     } catch (err) {
       console.error(err)
     }
   }
+
+  const [transporters, setTransporters] = useState([])
+
+  useEffect(() => {
+    const fetchTransporters = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}transporters`
+        )
+        setTransporters(response.data)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchTransporters()
+  }, [])
 
   return (
     <div className="flex justify-center items-center h-screen ">
@@ -51,6 +60,7 @@ const ManufacturerForm = ({ orderID, setOrderID }) => {
               Order ID:
             </label>
             <input
+              name="orderID"
               type="text"
               id="orderID"
               value={orderID}
@@ -66,10 +76,9 @@ const ManufacturerForm = ({ orderID, setOrderID }) => {
               From:
             </label>
             <input
+              name="from"
               type="text"
               id="from"
-              value={from}
-              onChange={(event) => setFrom(event.target.value)}
               placeholder="Source of the pickup"
               className="border border-gray-300 p-2 rounded-lg w-full"
             />
@@ -82,10 +91,9 @@ const ManufacturerForm = ({ orderID, setOrderID }) => {
               To:
             </label>
             <input
+              name="to"
               type="text"
               id="to"
-              value={to}
-              onChange={(event) => setTo(event.target.value)}
               placeholder="Destination of where the goods are meant to be delivered"
               className="border border-gray-300 p-2 rounded-lg w-full"
             />
@@ -98,9 +106,8 @@ const ManufacturerForm = ({ orderID, setOrderID }) => {
               Quantity:
             </label>
             <select
+              name="quantity"
               id="quantity"
-              value={quantity}
-              onChange={(event) => setQuantity(event.target.value)}
               className="border border-gray-300 p-2 rounded-lg w-full"
             >
               <option value={1}>1 ton</option>
@@ -116,10 +123,10 @@ const ManufacturerForm = ({ orderID, setOrderID }) => {
               Pickup Address:
             </label>
             <input
+              name="pickupAddress"
               type="text"
               id="pickupAddress"
-              value={pickupAddress}
-              onChange={(event) => setPickupAddress(event.target.value)}
+              defaultValue={pickupAddress}
               placeholder="Address"
               className="border border-gray-300 p-2 rounded-lg w-full"
             />
@@ -131,13 +138,17 @@ const ManufacturerForm = ({ orderID, setOrderID }) => {
             >
               Transporter:
             </label>
-            <input
-              type="text"
+            <select
+              name="transporter"
               id="transporter"
-              value={transporter}
-              onChange={(event) => setTransporter(event.target.value)}
               className="border border-gray-300 p-2 rounded-lg w-full"
-            />
+            >
+              {transporters.map((transporter) => (
+                <option key={transporter._id} value={transporter._id}>
+                  {transporter.username}
+                </option>
+              ))}
+            </select>
           </div>
           <button
             type="submit"

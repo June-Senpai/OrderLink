@@ -4,7 +4,7 @@ import { useCookies } from "react-cookie"
 import { useGetUserID } from "../hooks/useGetUserID"
 import { HamburgerMenu } from "./HamburgerMenu"
 
-export const Navbar = ({ setTheme, theme, username }) => {
+export const Navbar = ({ setTheme, theme, username, userType }) => {
   const [cookies, setCookies] = useCookies(["access_token"])
   const navigate = useNavigate()
   const location = useLocation()
@@ -38,15 +38,17 @@ export const Navbar = ({ setTheme, theme, username }) => {
                 </NavLink>
               )}
             </div>
-            <div className="hidden md:flex items-center space-x-1">
-              <NavLink
-                data-text="Form"
-                className="hidden md:flex items-center space-x-3 text-2xl"
-                to="/form"
-              >
-                Form
-              </NavLink>
-            </div>
+            {userType === "MANUFACTURER" ? (
+              <div className="hidden md:flex items-center space-x-1">
+                <NavLink
+                  data-text="Form"
+                  className="hidden md:flex items-center space-x-3 text-2xl"
+                  to="/form"
+                >
+                  Form
+                </NavLink>
+              </div>
+            ) : null}
           </div>
           <div className="hidden md:flex items-center space-x-3 text-2xl ">
             {!cookies.access_token ? (

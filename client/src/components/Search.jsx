@@ -7,6 +7,7 @@ const Search = ({ searchTerm, setSearchTerm }) => {
       [field]: event.target.value,
     }))
   }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 items-center justify-center mt-2 mb-2">
       {Object.keys(searchTerm).map((field) => (

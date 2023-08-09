@@ -4,9 +4,8 @@ import { Navbar } from "./components/Navbar"
 import Home from "./pages/Home"
 import { Auth } from "./pages/Auth"
 import ManufacturerForm from "./components/ManufacturerForm"
-import { TransporterForm } from "./components/TransporterForm"
-import { v4 as uuidv4 } from "uuid"
 import Order from "./components/Order"
+import { io } from "socket.io-client"
 
 function App() {
   const [username, setUsername] = useState(
@@ -15,38 +14,25 @@ function App() {
   const [userType, setUserType] = useState(
     window.localStorage.getItem("userType") || ""
   )
-  const [orderID, setOrderID] = useState(uuidv4())
+
+  const socket = io(import.meta.env.VITE_BACKEND_URL)
 
   return (
     <div>
       <Router>
-        <Navbar username={username} />
+        <Navbar username={username} userType={userType} />
         <Routes>
           <Route path="/" element={<Home />} />
-          {userType === "TRANSPORTER" ? (
-            <Route
-              path="/form"
-              element={<TransporterForm orderID={orderID} />}
-            />
-          ) : (
-            <Route
-              path="/form"
-              element={
-                <ManufacturerForm orderID={orderID} setOrderID={setOrderID} />
-              }
-            />
-          )}
-          <Route
-            path="/formT"
-            element={<TransporterForm orderID={orderID} />}
-          />
+
+          <Route path="/form" element={<ManufacturerForm />} />
+
           <Route
             path="/auth"
             element={
               <Auth setUsername={setUsername} setUserType={setUserType} />
             }
           />
-          <Route path="/order/:id" element={<Order orderID={orderID} />} />
+          <Route path="/order/:id" element={<Order />} />
         </Routes>
       </Router>
     </div>

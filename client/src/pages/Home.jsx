@@ -17,6 +17,17 @@ const Home = () => {
   })
   const [cookies] = useCookies(["access_token"])
   const navigate = useNavigate()
+  const filteredOrderList = orderList.filter((item) =>
+    Object.keys(searchTerm).every(
+      (field) =>
+        searchTerm[field] === "" ||
+        (item[field] &&
+          item[field]
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm[field].toLowerCase()))
+    )
+  )
 
   useEffect(() => {
     if (!cookies.access_token) {
@@ -27,7 +38,9 @@ const Home = () => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}orders`
+        `${import.meta.env.VITE_BACKEND_URL}orders?token=${
+          cookies.access_token
+        }`
       )
       setOrderList(response.data)
     } catch (err) {
@@ -43,21 +56,9 @@ const Home = () => {
     <div className="flex flex-col items-center justify-center">
       <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <div className="w-full max-w-md">
-        {orderList
-          .filter((item) =>
-            Object.keys(searchTerm).every(
-              (field) =>
-                searchTerm[field] === "" ||
-                (item[field] &&
-                  item[field]
-                    .toString()
-                    .toLowerCase()
-                    .includes(searchTerm[field].toLowerCase()))
-            )
-          )
-          .map((order) => (
-            <OrderItem order={order} key={order._id} />
-          ))}
+        {filteredOrderList.map((order) => (
+          <OrderItem order={order} key={order._id} />
+        ))}
       </div>
     </div>
   )
