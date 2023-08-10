@@ -8,68 +8,90 @@ const { default: mongoose } = require("mongoose")
 const secret = process.env.secret
 
 router.post("/orders", async (req, res) => {
-  const { orderID, from, to, quantity, pickupAddress, transporter, user } =
-    req.body
+  try {
+    const { orderID, from, to, quantity, pickupAddress, transporter, user } =
+      req.body
 
-  const transporterData = await User.findOne({ _id: transporter })
+    const io = req.app.get("io")
 
-  const newOrder = new Order({
-    orderID,
-    from,
-    to,
-    quantity,
-    pickupAddress,
-    transporter,
-    user,
-    transporterName: transporterData.username,
-  })
+    console.log({ io })
 
-  await newOrder.save()
-  res.json({ message: "Order created successfully" })
+    const transporterData = await User.findOne({ _id: transporter })
+
+    const newOrder = new Order({
+      orderID,
+      from,
+      to,
+      quantity,
+      pickupAddress,
+      transporter,
+      user,
+      transporterName: transporterData.username,
+    })
+
+    await newOrder.save()
+    const socketRoom = `${user} ${transporter}`
+    io.in(socketRoom).emit("orderCreated", newOrder)
+    res.json({ message: "Order created successfully" })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: "Server error" })
+  }
 })
 
 router.get("/orders", async (req, res) => {
-  const token = req.query.token
-  const decodedToken = jwt.verify(token, secret)
-  const { userType, id: userID } = decodedToken
-  let queryObject
-  switch (userType) {
-    case "MANUFACTURER":
-      {
-        queryObject = { user: userID }
-      }
-      break
-    case "TRANSPORTER":
-      {
-        queryObject = { transporter: userID }
-      }
-      break
+  try {
+    const token = req.query.token
+    const decodedToken = jwt.verify(token, secret)
+    const { userType, id: userID } = decodedToken
+    let queryObject
+    switch (userType) {
+      case "MANUFACTURER":
+        {
+          queryObject = { user: userID }
+        }
+        break
+      case "TRANSPORTER":
+        {
+          queryObject = { transporter: userID }
+        }
+        break
+    }
+    const orders = await Order.find(queryObject)
+    res.json(orders)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: "Server error" })
   }
-  const orders = await Order.find(queryObject)
-  res.json(orders)
 })
 
 router.get("/orders/:orderID", async (req, res) => {
-  const { orderID } = req.params
-  const order = await Order.findOne({ orderID })
-  res.json(order)
+  try {
+    const { orderID } = req.params
+    const order = await Order.findOne({ orderID })
+    res.json(order)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: "Server error" })
+  }
 })
 
 router.post("/orders/:orderID/price", async (req, res) => {
-  const { orderID } = req.params
-  const { price } = req.body
-  const order = await Order.findOne({ orderID })
-  order.price = price
-  await order.save()
-  res.json({ message: "Price updated successfully", price })
+  try {
+    const { orderID } = req.params
+    const { price } = req.body
+    const io = req.app.get("io")
+    const order = await Order.findOne({ orderID })
+    order.price = price
+    await order.save()
+    const socketRoom = `${order.user} ${order.transporter}`
+    io.in(socketRoom).emit("priceUpdated", order)
+    res.json({ message: "Price updated successfully", price })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: "Server error" })
+  }
 })
-
-// router.patch("/orders/:orderID", async (req, res) => {
-//   const { orderID } = req.params
-//   const { price } = req.body
-//   await Order.updateOne({ orderID }, { price })
-//   res.json({ message: "Price updated successfully" })
-// })
 
 router.get("/transporters", async (req, res) => {
   try {

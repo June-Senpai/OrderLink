@@ -10,22 +10,27 @@ const secret = process.env.secret
 const User = require("../schema/UserSchema")
 
 router.post("/register/user", async (req, res) => {
-  const { username, password, userType, address } = req.body
-  const user = await User.findOne({ username })
+  try {
+    const { username, password, userType, address } = req.body
+    const user = await User.findOne({ username })
 
-  if (user) {
-    return res.json({ message: "user already exists" })
+    if (user) {
+      return res.json({ message: "user already exists" })
+    }
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const newUser = new User({
+      username,
+      password: hashedPassword,
+      userType,
+      address,
+    })
+    await newUser.save()
+    res.json({ message: "user registered successfully" })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
   }
-  const hashedPassword = await bcrypt.hash(password, 10)
-
-  const newUser = new User({
-    username,
-    password: hashedPassword,
-    userType,
-    address,
-  })
-  await newUser.save()
-  res.json({ message: "user registered successfully" })
 })
 
 router.post("/login", async (req, res) => {
@@ -58,14 +63,19 @@ router.post("/login", async (req, res) => {
 module.exports.userRouter = router
 
 module.exports.verifyToken = (req, res, next) => {
-  const token = req.headers.authorization
+  try {
+    const token = req.headers.authorization
 
-  if (token) {
-    jwt.verify(token, secret, (err) => {
-      if (err) return res.sendStatus(403)
-      next()
-    })
-  } else {
-    res.sendStatus(401)
+    if (token) {
+      jwt.verify(token, secret, (err) => {
+        if (err) return res.sendStatus(403)
+        next()
+      })
+    } else {
+      res.sendStatus(401)
+    }
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
   }
 }

@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { v4 as uuidv4 } from "uuid"
 import { useNavigate } from "react-router-dom"
 
-const ManufacturerForm = () => {
+const ManufacturerForm = ({ socket }) => {
   const orderID = useMemo(() => Date.now().toString(36).toUpperCase(), [])
 
   const pickupAddress = localStorage.getItem("address")

@@ -5,8 +5,7 @@ import OrderItem from "../components/OrderItem"
 import Search from "../components/Search"
 import axios from "axios"
 
-const Home = () => {
-  const [orderList, setOrderList] = useState([])
+const Home = ({ socket, orderList, setOrderList }) => {
   const [searchTerm, setSearchTerm] = useState({
     orderID: "",
     from: "",
@@ -42,7 +41,12 @@ const Home = () => {
           cookies.access_token
         }`
       )
-      setOrderList(response.data)
+      const orders = response.data
+      setOrderList(orders)
+      const roomsToJoin = orders.map(
+        ({ transporter, user }) => `${user} ${transporter}`
+      )
+      socket.emit("joinRooms", roomsToJoin)
     } catch (err) {
       console.error(err)
     }

@@ -20,6 +20,7 @@ export const Navbar = ({ setTheme, theme, username, userType }) => {
       return previousTheme === "light" ? "dark" : "light"
     })
   }
+
   return (
     <nav className="bg-white shadow-lg mb-8">
       <div className="max-w-6xl mx-auto px-4 p-2">
@@ -38,7 +39,8 @@ export const Navbar = ({ setTheme, theme, username, userType }) => {
                 </NavLink>
               )}
             </div>
-            {userType === "MANUFACTURER" ? (
+
+            {userType === "MANUFACTURER" && location === "/" ? (
               <div className="hidden md:flex items-center space-x-1">
                 <NavLink
                   data-text="Form"
