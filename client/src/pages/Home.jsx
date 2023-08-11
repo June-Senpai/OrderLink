@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useCookies } from "react-cookie"
 import OrderItem from "../components/OrderItem"
@@ -36,6 +36,7 @@ const Home = ({ socket, orderList, setOrderList }) => {
 
   const fetchOrders = async () => {
     try {
+      if (!cookies.access_token) return
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}orders?token=${
           cookies.access_token

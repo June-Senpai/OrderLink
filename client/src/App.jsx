@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import { Navbar } from "./components/Navbar"
 import Home from "./pages/Home"
@@ -14,8 +14,9 @@ function App() {
     window.localStorage.getItem("username") || ""
   )
   const [userType, setUserType] = useState(
-    window.localStorage.getItem("userType") || ""
+    () => window.localStorage.getItem("userType") || ""
   )
+
   const [orderList, setOrderList] = useState([])
 
   useEffect(() => {
@@ -45,7 +46,7 @@ function App() {
       socket.off("priceUpdated", handlePriceUpdate)
       socket.off("orderCreated", handleOrderCreated)
     }
-  }, [socket])
+  }, [userType, setOrderList, setMessageReceived, setOrder])
 
   return (
     <div>
@@ -81,6 +82,7 @@ function App() {
                 messageReceived={messageReceived}
                 setMessageReceived={setMessageReceived}
                 username={username}
+                orderList={orderList}
               />
             }
           />

@@ -1,26 +1,29 @@
-import React, { useState, useEffect, Fragment } from "react"
+import { useState, useEffect, Fragment } from "react"
 import { useParams } from "react-router-dom"
 import axios from "axios"
 import ChatBox from "./ChatBox"
 
 function Order({
-  socket,
-  order,
+  order: _order,
   setOrder,
   setMessageReceived,
   messageReceived,
   username,
+  orderList,
 }) {
   const { id: orderID } = useParams()
   const userType = window.localStorage.getItem("userType")
   const isTransporter = userType === "TRANSPORTER"
   const [isEditingPriceMode, setIsEditingPriceMode] = useState(false)
   const [price, setPrice] = useState("")
-  const priceMessage = () => {
-    socket.emit("price_message", { price })
-  }
+  const order = Object.keys(_order).length
+    ? _order
+    : orderList.find((order) => order.orderID === orderID)
 
   const onSubmit = async (event) => {
+    const order = Object.keys(_order).length
+      ? _order
+      : orderList.find((order) => order.orderID === orderID)
     event.preventDefault()
     // priceMessage()
     const oldOrder = order
@@ -52,7 +55,7 @@ function Order({
     }
 
     fetchOrder()
-  }, [orderID])
+  }, [orderID, setOrder])
 
   const onClickButton = isEditingPriceMode
     ? onSubmit
@@ -60,7 +63,7 @@ function Order({
 
   return (
     <>
-      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md ">
         {order ? (
           <div className="p-8">
             <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">

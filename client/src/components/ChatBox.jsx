@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react"
+import { useEffect } from "react"
 import socket from "../SocketHandler"
+import axios from "axios"
 
 const ChatBox = ({
-  setMessageReceived,
   messageReceived,
   user,
   transporter,
@@ -10,40 +10,49 @@ const ChatBox = ({
   orderID,
   username,
   transporterName,
+  setMessageReceived,
 }) => {
   const [sender, senderName, receiver, receiverName] =
     userType === "MANUFACTURER"
       ? [user, username, transporter, transporterName]
       : [transporter, transporterName, user, username]
 
-  const sendMessage = useCallback(
-    (e) => {
-      e.preventDefault()
-      const data = Object.fromEntries(new FormData(e.target).entries())
-      socket.emit("send_message", {
-        room: `${user} ${transporter}`,
-        content: data.message,
-        sender,
-        senderName,
-        senderType: userType,
-        receiver,
-        receiverName,
-        orderID,
-      })
-    },
-    [socket]
-  )
+  const sendMessage = (e) => {
+    e.preventDefault()
+    const data = Object.fromEntries(new FormData(e.target).entries())
+    socket.emit("send_message", {
+      room: `${user} ${transporter}`,
+      content: data.message,
+      sender,
+      senderName,
+      senderType: userType,
+      receiver,
+      receiverName,
+      orderID,
+    })
+  }
+
+  useEffect(() => {
+    async function fetchMessage() {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}messages/${orderID}`
+      )
+      setMessageReceived(response.data)
+    }
+    fetchMessage()
+  }, [orderID, setMessageReceived])
 
   return (
-    <div className="mt-10 max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+    <div className="mt-10 max-w-md mx-auto bg-white rounded-xl shadow-md ">
       <div className="p-8">
         <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
           ChatBox Message:
         </div>
         <ul className="mt-2 text-gray-500 overflow-y-scroll max-h-[300px]">
           {messageReceived.map((data) => (
-            <li key={data.id}>
-              <span className="font-bold">{data.senderName}:</span> {data.msg}
+            <li key={data._id}>
+              <span className="font-bold">{data.senderName}:</span>{" "}
+              {data.content}
             </li>
           ))}
         </ul>
